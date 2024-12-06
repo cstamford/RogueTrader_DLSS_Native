@@ -317,8 +317,7 @@ static void Initialize(ID3D11Device* device, ID3D11DeviceContext* immediateConte
     });
 
     D3D11::On_SetRenderTargets([](const std::vector<ID3D11RenderTargetView*>& rtvs, ID3D11DepthStencilView* dsv) {
-        bool match = false;
-
+        ID3D11RenderTargetView* match = nullptr;
         NVSDK_NGX_D3D11_DLSS_Eval_Params* params = _state.PendingEvalParams.get();
 
         if (first && params) {
@@ -331,7 +330,7 @@ static void Initialize(ID3D11Device* device, ID3D11DeviceContext* immediateConte
                 res->Release();
 
                 if (res == params->Feature.pInOutput) {
-                    match = true;
+                    match = rtv;
                     break;
                 }
             }
@@ -363,12 +362,15 @@ static void Initialize(ID3D11Device* device, ID3D11DeviceContext* immediateConte
 
             if (!validationFailure) {
                 DISCARD(NGX_D3D11_EVALUATE_DLSS_EXT(D3D11::GetImmediateContext(), _state.Handle, _state.Params, params));
-
-                params->Feature.pInColor->Release();
-                params->Feature.pInOutput->Release();
-                params->pInDepth->Release();
-                params->pInMotionVectors->Release();
+            } else {
+                const float rgba[] = { 1.0f, 0.0f, 0.0f, 1.0f };
+                D3D11::GetImmediateContext()->ClearRenderTargetView(match, rgba);
             }
+
+            params->Feature.pInColor->Release();
+            params->Feature.pInOutput->Release();
+            params->pInDepth->Release();
+            params->pInMotionVectors->Release();
 
             _state.PendingEvalParams.reset();
             first = false;

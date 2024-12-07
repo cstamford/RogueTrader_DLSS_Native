@@ -93,7 +93,7 @@ static void UpdateInspectorWindow(IDXGISwapChain*)
             ImGui::Text(rtInfo.c_str());
             ImGui::Text(texInfo.c_str());
 
-            const float aspect = static_cast<float>(info.TextureInfo.Width) / static_cast<float>(info.TextureInfo.Height);
+            const float aspect = (float)info.TextureInfo.Width / info.TextureInfo.Height;
             const ImVec2 windowSize = ImGui::GetWindowSize();
             const ImVec2 previewSize = ImVec2(windowSize.x, (windowSize.x / aspect));
 
@@ -105,9 +105,9 @@ static void UpdateInspectorWindow(IDXGISwapChain*)
                 srvPreview = ImGui::IsItemHovered() || _state.ImGuiState.PinnedLabel == labelPtr ? info.Srv : srvPreview;
             }
         }
-
-        ImGui::End();
     }
+
+    ImGui::End();
 
     if (srvPreview) {
         const ImVec2 min = ImVec2(0, 0);
@@ -164,12 +164,16 @@ static void OnSetRenderTarget(ID3D11View* rt)
     if (ID3D11RenderTargetView * rtv; SUCCEEDED(rt->QueryInterface(__uuidof(ID3D11RenderTargetView), (void**)&rtv))) {
         D3D11_RENDER_TARGET_VIEW_DESC rtvDesc;
         rtv->GetDesc(&rtvDesc);
+        rtv->Release();
+
         info.RenderTargetInfo.Format = DXGI::GetDebugName(rtvDesc.Format);
         info.RenderTargetInfo.ViewDimension = D3D11::GetDebugName(rtvDesc.ViewDimension);
         srvFormat = rtvDesc.Format;
     } else if (ID3D11DepthStencilView * dsv; SUCCEEDED(rt->QueryInterface(__uuidof(ID3D11DepthStencilView), (void**)&dsv))) {
         D3D11_DEPTH_STENCIL_VIEW_DESC dsvDesc;
         dsv->GetDesc(&dsvDesc);
+        dsv->Release();
+
         info.RenderTargetInfo.Format = DXGI::GetDebugName(dsvDesc.Format);
         info.RenderTargetInfo.ViewDimension = D3D11::GetDebugName(dsvDesc.ViewDimension);
         srvFormat = DXGI_FORMAT_R32_FLOAT_X8X24_TYPELESS;
@@ -217,7 +221,7 @@ static void OnSetRenderTarget(ID3D11View* rt)
 static bool Initialize()
 {
     DXGI::On_Present_After(UpdateInspectorWindow);
-
+    
     D3D11::On_SetRenderTargets([](const std::vector<ID3D11RenderTargetView*>& rtvs, ID3D11DepthStencilView* dsv) {
         for (ID3D11RenderTargetView* rtv : rtvs) {
             if (rtv) {

@@ -7,14 +7,6 @@ FARPROC WINAPI Hook_GetProcAddress(_In_ HMODULE hModule, _In_ LPCSTR lpProcName)
 
 static void SetupConsole();
 
-static void MainThread()
-{
-    while (true) {
-        // TODO: Wait for present mutex
-    }
-
-}
-
 BOOL APIENTRY DllMain(HMODULE module, DWORD reason, LPVOID _)
 {
     if (reason == DLL_PROCESS_ATTACH) {
@@ -47,7 +39,6 @@ FARPROC WINAPI Hook_GetProcAddress(
     const bool isOrdinal = HIWORD(lpProcName) == 0;
 
     if (isOrdinal) {
-
         return _GetProcAddress(hModule, lpProcName);
     }
 

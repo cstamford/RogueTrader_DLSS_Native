@@ -211,6 +211,7 @@
     <ClCompile Include="src/Services.cpp" />
     <ClCompile Include="src/Util.cpp" />
     <ClCompile Include="src/Services/DLSS.cpp" />
+    <ClCompile Include="src\Services\Debug\DebugPrintFromManaged.cpp" />
     <ClCompile Include="src\Services\ImGUIService.cpp" />
     <ClCompile Include="src\Services\Platform\D3D11\D3D11.cpp" />
     <ClCompile Include="src\Services\Platform\DXGI\DXGI.cpp" />

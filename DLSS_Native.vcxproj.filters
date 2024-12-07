@@ -35,6 +35,7 @@
     <ClCompile Include="src\Services\Platform\DXGI\DXGI_Factory.cpp" />
     <ClCompile Include="src\Services\Platform\DXGI\DXGI_SwapChain.cpp" />
     <ClCompile Include="src\Services\ImGUIService.cpp" />
+    <ClCompile Include="src\Services\Debug\DebugPrintFromManaged.cpp" />
   </ItemGroup>
   <ItemGroup>
     <None Include="vcpkg.json" />
